@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="PaySecureGateway"
+             targetNamespace="http://paysecure.example.com/wsdl/PaySecureGateway"
+             xmlns:tns="http://paysecure.example.com/wsdl/PaySecureGateway"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+  
+  <!-- 1. Types: XSD schema defining the shapes of every message -->
+
+  <types>
+    <xsd:schema targetNamespace="http://paysecure.example.com/wsdl/PaySecureGateway">
+
+      <!-- Credentials used in the SOAP Header -->
+      <xsd:element name="RequesterCredentials">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Username" type="xsd:string"/>
+            <xsd:element name="Password" type="xsd:string"/>
+            <xsd:element name="Signature" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+		
+		
+
+      <!-- Request: charge a card for a CampusEats order -->
+      <xsd:element name="ChargeRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="MerchantOrderId" type="xsd:string"/>
+            <xsd:element name="Amount" type="xsd:decimal"/>
+            <xsd:element name="CurrencyCode" type="xsd:string"/>
+            <xsd:element name="CardNumber" type="xsd:string"/>
+            <xsd:element name="CardExpiryMonth" type="xsd:int"/>
+            <xsd:element name="CardExpiryYear" type="xsd:int"/>
+            <xsd:element name="CardHolderName" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Response: successful charge confirmation -->
+      <xsd:element name="ChargeResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Acknowledgement" type="xsd:string"/>
+            <xsd:element name="TransactionId" type="xsd:string"/>
+            <xsd:element name="MerchantOrderId" type="xsd:string"/>
+            <xsd:element name="AmountCharged" type="xsd:decimal"/>
+            <xsd:element name="Timestamp" type="xsd:dateTime"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Fault detail: structured info carried inside soap:Fault -->
+      <xsd:element name="PaySecureFault">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="ErrorCode" type="xsd:string"/>
+            <xsd:element name="ErrorMessage" type="xsd:string"/>
+            <xsd:element name="MerchantOrderId" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+    </xsd:schema>
+  </types>
+
+  <!-- 2. MESSAGES: wrap the schema elements above for use in the   -->
+  <!-- portType's input/output/fault -->
+	
+  <message name="ChargeRequestMessage">
+    <part name="parameters" element="tns:ChargeRequest"/>
+  </message>
+
+  <message name="ChargeResponseMessage">
+    <part name="parameters" element="tns:ChargeResponse"/>
+  </message>
+
+  <message name="ChargeFaultMessage">
+    <part name="fault" element="tns:PaySecureFault"/>
+  </message>
+
+  <!-- 3. PORTTYPE: the abstract operation  -->
+  <portType name="PaySecureGatewayPortType">
+    <operation name="Charge">
+      <input message="tns:ChargeRequestMessage"/>
+      <output message="tns:ChargeResponseMessage"/>
+      <fault name="ChargeFault" message="tns:ChargeFaultMessage"/>
+    </operation>
+  </portType>
+
+  <!-- 4. BINDING: SOAP over HTTP -->
+  <binding name="PaySecureGatewayBinding" type="tns:PaySecureGatewayPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+    <operation name="Charge">
+      <soap:operation soapAction="http://paysecure.example.com/actions/Charge" style="document"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="ChargeFault">
+        <soap:fault name="ChargeFault" use="literal"/>
+      </fault>
+    </operation>
+  </binding>
+
+  <!-- 5. SERVICE/PORT: the real-looking endpoint -->
+  <service name="PaySecureGatewayService">
+    <port name="PaySecureGatewayPort" binding="tns:PaySecureGatewayBinding">
+      <soap:address location="https://api.paysecure.example.com/gateway/v1/soap"/>
+    </port>
+  </service>
+
+</definitions>
