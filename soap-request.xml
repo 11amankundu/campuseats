@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                   xmlns:tns="http://paysecure.example.com/wsdl/PaySecureGateway">
+  <soapenv:Header>
+    <tns:RequesterCredentials>
+      <tns:Username>CAMPUSEATS_MERCHANT</tns:Username>
+      <tns:Password>a1s2d3f4</tns:Password>
+      <tns:Signature>Xk29fLp0qRt8vZmN3jC7wYbH1eGdSa</tns:Signature>
+    </tns:RequesterCredentials>
+  </soapenv:Header>
+
+  <soapenv:Body>
+    <tns:ChargeRequest>
+      <tns:MerchantOrderId>CE-ORD-100245</tns:MerchantOrderId>
+      <tns:Amount>349.00</tns:Amount>
+      <tns:CurrencyCode>INR</tns:CurrencyCode>
+      <tns:CardNumber>4111111111111111</tns:CardNumber>
+      <tns:CardExpiryMonth>12</tns:CardExpiryMonth>
+      <tns:CardExpiryYear>2027</tns:CardExpiryYear>
+      <tns:CardHolderName>Suhan Patel</tns:CardHolderName>
+    </tns:ChargeRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
